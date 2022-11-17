@@ -12,8 +12,4 @@ class ApiApplicationTests {
 	void contextLoads() {
 	}
 
-	@Test
-	void failtest() {
-		fail();
-	}
 }
