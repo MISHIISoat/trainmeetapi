@@ -14,6 +14,10 @@ public class JpaAccount {
     private String email;
     private String password;
 
+    public String getEmail() {
+        return email;
+    }
+
 
     public static final class JpaAccountBuilder {
         private Long id;

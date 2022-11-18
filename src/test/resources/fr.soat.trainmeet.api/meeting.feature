@@ -9,9 +9,4 @@ Feature: Meeting management
     And a receiver with email "receiver@email.com" that have account
     And today is "20-09-2022"
     When the sender try to create meeting
-    Then the meeting should be created with properties
-      | name               | Sign the contract                                      |
-      | description        | the purpose of the meeting is to sign you new contract |
-      | firstPotentialDate | 22-09-2022                                             |
-      | lastPotentialDate  | 30-09-2022                                             |
-
+    Then the meeting should be created
