@@ -2,7 +2,12 @@ package fr.soat.trainmeet.api.acceptance;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fr.soat.trainmeet.api.meeting.infrastructure.*;
+import fr.soat.trainmeet.api.meeting.infrastructure.JpaAccount;
+import fr.soat.trainmeet.api.meeting.infrastructure.JpaAccountRepository;
+import fr.soat.trainmeet.api.meeting.infrastructure.JpaMeeting;
+import fr.soat.trainmeet.api.meeting.infrastructure.JpaMeetingRepository;
+import fr.soat.trainmeet.api.meeting.application.MeetingJson;
+import fr.soat.trainmeet.api.meeting.infrastructure.helper.LocalDateHelper;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -14,6 +19,7 @@ import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
@@ -23,6 +29,8 @@ import java.time.format.DateTimeFormatter;
 
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
@@ -30,7 +38,8 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 @CucumberContextConfiguration
 @ActiveProfiles("AcceptanceTest")
 public class MeetingSteps {
-
+    @MockBean
+    LocalDateHelper mockLocalDateHelper;
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     @LocalServerPort
     private int port;
@@ -49,13 +58,13 @@ public class MeetingSteps {
     private String description;
     private String firstDate;
     private String lastDate;
-    private String today;
     private String receiverEmail;
 
     @Before
     public void before() {
         RestAssured.port = port;
         RestAssured.basePath = API_MEETING;
+        mockLocalDateHelper = mock(LocalDateHelper.class);
     }
 
     @Given("a sender with email {string} that have account")
@@ -67,7 +76,6 @@ public class MeetingSteps {
     @Given("a meeting with name {string}")
     public void aMeetingWithName(String name) {
         this.name = name;
-        System.out.println(this.name);
     }
 
     @And("the description is {string}")
@@ -87,7 +95,7 @@ public class MeetingSteps {
 
     @And("today is {string}")
     public void todayIs(String today) {
-        this.today = today;
+        when(mockLocalDateHelper.today()).thenReturn(LocalDate.parse(today, DATE_TIME_FORMATTER));
     }
 
     @And("a receiver with email {string} that have account")

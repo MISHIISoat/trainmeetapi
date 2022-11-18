@@ -1,4 +1,4 @@
-package fr.soat.trainmeet.api.meeting.infrastructure;
+package fr.soat.trainmeet.api.meeting.application;
 
 public record MeetingJson(
         String name,
